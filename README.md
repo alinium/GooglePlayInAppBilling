@@ -17,7 +17,8 @@ References
 ----------
 
 - [In-App Billing Version 3](http://developer.android.com/google/play/billing/api.html)
-- [TrivialDrive Sample Application](http://developer.android.com/training/in-app-billing/preparing-iab-app.html)
+- [TrivialDrive Sample Application Instructions](http://developer.android.com/training/in-app-billing/preparing-iab-app.html)
+- [TrivialDrive Sample App GitHub](https://github.com/obriand/android-iabv3-trivialdrive)
 
 Tips
 ----
