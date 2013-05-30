@@ -372,6 +372,7 @@ public class IabHelper {
 				logError("Unable to buy item, Error response: " + getResponseDesc(response));
 
 				result = new IabResult(response, "Unable to buy item");
+				flagEndAsync();
 				if (listener != null) listener.onIabPurchaseFinished(result, null);
 				return;
 			}
@@ -382,9 +383,9 @@ public class IabHelper {
 			mPurchaseListener = listener;
 			mPurchasingItemType = itemType;
 			act.startIntentSenderForResult(pendingIntent.getIntentSender(),
-										   requestCode, new Intent(),
-										   Integer.valueOf(0), Integer.valueOf(0),
-										   Integer.valueOf(0));
+										requestCode, new Intent(),
+										Integer.valueOf(0), Integer.valueOf(0),
+										Integer.valueOf(0));
 		}
 		catch (SendIntentException e) {
 			logError("SendIntentException while launching purchase flow for sku " + sku);
@@ -582,8 +583,8 @@ public class IabHelper {
 	 * @param listener The listener to notify when the refresh operation completes.
 	 */
 	public void queryInventoryAsync(final boolean querySkuDetails,
-							   final List<String> moreSkus,
-							   final QueryInventoryFinishedListener listener) {
+							final List<String> moreSkus,
+							final QueryInventoryFinishedListener listener) {
 		final Handler handler = new Handler();
 		checkSetupDone("queryInventory");
 		flagStartAsync("refresh inventory");
@@ -641,19 +642,19 @@ public class IabHelper {
 			String token = itemInfo.getToken();
 			String sku = itemInfo.getSku();
 			if (token == null || token.equals("")) {
-			   logError("Can't consume "+ sku + ". No token.");
-			   throw new IabException(IABHELPER_MISSING_TOKEN, "PurchaseInfo is missing token for sku: "
-				   + sku + " " + itemInfo);
+			logError("Can't consume "+ sku + ". No token.");
+			throw new IabException(IABHELPER_MISSING_TOKEN, "PurchaseInfo is missing token for sku: "
+				+ sku + " " + itemInfo);
 			}
 
 			logDebug("Consuming sku: " + sku + ", token: " + token);
 			int response = mService.consumePurchase(3, mContext.getPackageName(), token);
 			if (response == BILLING_RESPONSE_RESULT_OK) {
-			   logDebug("Successfully consumed sku: " + sku);
+			logDebug("Successfully consumed sku: " + sku);
 			}
 			else {
-			   logDebug("Error consuming consuming sku " + sku + ". " + getResponseDesc(response));
-			   throw new IabException(response, "Error consuming sku " + sku);
+			logDebug("Error consuming consuming sku " + sku + ". " + getResponseDesc(response));
+			throw new IabException(response, "Error consuming sku " + sku);
 			}
 		}
 		catch (RemoteException e) {
@@ -726,15 +727,15 @@ public class IabHelper {
 				"5:Developer Error/6:Error/7:Item Already Owned/" +
 				"8:Item not owned").split("/");
 		String[] iabhelper_msgs = ("0:OK/-1001:Remote exception during initialization/" +
-								   "-1002:Bad response received/" +
-								   "-1003:Purchase signature verification failed/" +
-								   "-1004:Send intent failed/" +
-								   "-1005:User cancelled/" +
-								   "-1006:Unknown purchase response/" +
-								   "-1007:Missing token/" +
-								   "-1008:Unknown error/" +
-								   "-1009:Subscriptions not available/" +
-								   "-1010:Invalid consumption attempt").split("/");
+								"-1002:Bad response received/" +
+								"-1003:Purchase signature verification failed/" +
+								"-1004:Send intent failed/" +
+								"-1005:User cancelled/" +
+								"-1006:Unknown purchase response/" +
+								"-1007:Missing token/" +
+								"-1008:Unknown error/" +
+								"-1009:Subscriptions not available/" +
+								"-1010:Invalid consumption attempt").split("/");
 
 		if (code <= IABHELPER_ERROR_BASE) {
 			int index = IABHELPER_ERROR_BASE - code;
@@ -800,6 +801,10 @@ public class IabHelper {
 		logDebug("Ending async operation: " + mAsyncOperation);
 		mAsyncOperation = "";
 		mAsyncInProgress = false;
+	}
+	
+	public boolean isAsyncInProgress() {
+		return mAsyncInProgress;
 	}
 
 
@@ -908,8 +913,8 @@ public class IabHelper {
 
 
 	void consumeAsyncInternal(final List<Purchase> purchases,
-							  final OnConsumeFinishedListener singleListener,
-							  final OnConsumeMultiFinishedListener multiListener) {
+							final OnConsumeFinishedListener singleListener,
+							final OnConsumeMultiFinishedListener multiListener) {
 		final Handler handler = new Handler();
 		flagStartAsync("consume");
 		(new Thread(new Runnable() {
