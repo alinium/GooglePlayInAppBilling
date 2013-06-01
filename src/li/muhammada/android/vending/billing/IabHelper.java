@@ -409,8 +409,8 @@ public class IabHelper {
 				logError("Unable to buy item, Error response: "
 						+ getResponseDesc(response));
 
-				result = new IabResult(response, "Unable to buy item");
 				flagEndAsync();
+				result = new IabResult(response, "Unable to buy item");
 				if (listener != null)
 					listener.onIabPurchaseFinished(result, null);
 				return;
@@ -430,6 +430,7 @@ public class IabHelper {
 			logError("SendIntentException while launching purchase flow for sku "
 					+ sku);
 			e.printStackTrace();
+			flagEndAsync();
 
 			result = new IabResult(IABHELPER_SEND_INTENT_FAILED,
 					"Failed to send intent.");
@@ -439,6 +440,7 @@ public class IabHelper {
 			logError("RemoteException while launching purchase flow for sku "
 					+ sku);
 			e.printStackTrace();
+			flagEndAsync();
 
 			result = new IabResult(IABHELPER_REMOTE_EXCEPTION,
 					"Remote exception while starting purchase flow");
