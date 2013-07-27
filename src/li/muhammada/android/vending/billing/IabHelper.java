@@ -129,6 +129,7 @@ public class IabHelper {
 	public static final int IABHELPER_UNKNOWN_ERROR = -1008;
 	public static final int IABHELPER_SUBSCRIPTIONS_NOT_AVAILABLE = -1009;
 	public static final int IABHELPER_INVALID_CONSUMPTION = -1010;
+	public static final int IABHELPER_CONTEXT_NOT_SET = -1011;
 
 	// Keys for the responses from InAppBillingService
 	public static final String RESPONSE_CODE = "RESPONSE_CODE";
@@ -979,6 +980,10 @@ public class IabHelper {
 
 	int queryPurchases(Inventory inv, String itemType) throws JSONException,
 	RemoteException {
+		if (mContext == null) {
+			return IABHELPER_CONTEXT_NOT_SET;
+		}
+
 		// Query purchases
 		logDebug("Querying owned items, item type: " + itemType);
 		logDebug("Package name: " + mContext.getPackageName());
